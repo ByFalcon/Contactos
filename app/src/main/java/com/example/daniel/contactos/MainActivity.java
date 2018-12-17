@@ -1,12 +1,19 @@
 package com.example.daniel.contactos;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,33 +21,46 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-    static List<Contacto> data = new ArrayList<>();
+    static List<Contacto> lista = new ArrayList<>();
+    Adaptador adaptador;
+    private final int READ_CONTACTOS = 1;
+    final private int REQUEST_CODE_PERMISSIONS = 2;
+    int permiso;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)!= PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS}, READ_CONTACTOS);
+
         recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        llenarLista();
-
-        Adaptador adaptador = new Adaptador(data);
-        recyclerView.setAdapter(adaptador);
+        permisos();
     }
 
     public void llenarLista(){
-        List<Contacto> listContacts = getListaContactos();
-        //List<String> listTelephones = getListaTelefonos(listContacts.get(i).getId());
+        /*List<Contacto> listContacts = getListaContactos();
+        List<String> listTelephones;
         List<Contacto> listContactsDef = new ArrayList<>();
         for(int i = 0; i<listContacts.size(); i++){
+            listTelephones = getListaTelefonos(listContacts.get(i).getId());
             Contacto contacto = new Contacto();
             contacto.setId(listContacts.get(i).getId());
             contacto.setNombre(listContacts.get(i).getNombre());
-            //contacto.setTelefono(listTelephones.get(i));
+            contacto.setTelefono(listTelephones.get(i));
             listContactsDef.add(contacto);
+        }*/
+        lista = getListaContactos();
+        for(Contacto c : lista){
+            List<String> telefonos = getListaTelefonos(c.getId());
+            if (telefonos.size() > 0){
+                c.setTelefono(telefonos.get(0));
+            }
         }
+        Log.v("TAG", "Tamaño lista " + lista.size());
     }
 
     public List<Contacto> getListaContactos(){
@@ -79,5 +99,25 @@ public class MainActivity extends AppCompatActivity {
             lista.add(numero);
         }
         return lista;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void permisos(){
+        permiso = checkSelfPermission(Manifest.permission.READ_CONTACTS);
+        if(permiso != PackageManager.PERMISSION_GRANTED){
+            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, REQUEST_CODE_PERMISSIONS);
+        }
+        else{
+            llenarLista();
+            adaptador = new Adaptador(getApplicationContext(), lista);
+            recyclerView.setAdapter(adaptador);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            adaptador.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

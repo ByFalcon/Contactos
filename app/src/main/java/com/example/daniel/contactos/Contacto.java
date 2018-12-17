@@ -13,7 +13,7 @@ public class Contacto {
     }
 
     public Contacto(){
-
+        this(0, "", "");
     }
 
     public long getId() {
