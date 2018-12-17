@@ -1,12 +1,14 @@
 package com.example.daniel.contactos;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -42,17 +44,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void llenarLista(){
-        /*List<Contacto> listContacts = getListaContactos();
-        List<String> listTelephones;
-        List<Contacto> listContactsDef = new ArrayList<>();
-        for(int i = 0; i<listContacts.size(); i++){
-            listTelephones = getListaTelefonos(listContacts.get(i).getId());
-            Contacto contacto = new Contacto();
-            contacto.setId(listContacts.get(i).getId());
-            contacto.setNombre(listContacts.get(i).getNombre());
-            contacto.setTelefono(listTelephones.get(i));
-            listContactsDef.add(contacto);
-        }*/
         lista = getListaContactos();
         for(Contacto c : lista){
             List<String> telefonos = getListaTelefonos(c.getId());
@@ -119,5 +110,26 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 10){
+            if(resultCode == RESULT_OK){
+                Intent i = getIntent();
+                Contacto contactoEditado = i.getParcelableExtra("cEditado");
+                long id = contactoEditado.getId();
+                String nombre = contactoEditado.getNombre();
+                String telefono = contactoEditado.getTelefono();
+                for (Contacto c : lista) {
+                    if (c.getId() == id) {
+                        c.setNombre(nombre);
+                        c.setTelefono(telefono);
+                        adaptador.notifyDataSetChanged();
+                    }
+                }
+            }
+        }
     }
 }

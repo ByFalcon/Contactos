@@ -1,6 +1,9 @@
 package com.example.daniel.contactos;
 
-public class Contacto {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Contacto implements Parcelable {
 
     long id;
     private String nombre;
@@ -15,6 +18,24 @@ public class Contacto {
     public Contacto(){
         this(0, "", "");
     }
+
+    protected Contacto(Parcel in) {
+        id = in.readLong();
+        nombre = in.readString();
+        telefono = in.readString();
+    }
+
+    public static final Creator<Contacto> CREATOR = new Creator<Contacto>() {
+        @Override
+        public Contacto createFromParcel(Parcel in) {
+            return new Contacto(in);
+        }
+
+        @Override
+        public Contacto[] newArray(int size) {
+            return new Contacto[size];
+        }
+    };
 
     public long getId() {
         return id;
@@ -38,5 +59,17 @@ public class Contacto {
 
     public void setTelefono(String telefono) {
         this.telefono = telefono;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(nombre);
+        dest.writeString(telefono);
     }
 }

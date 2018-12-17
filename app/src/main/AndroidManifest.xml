@@ -20,7 +20,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".Adaptador" />
-        <activity android:name=".Contacto"></activity>
+        <activity android:name=".Contacto" />
+        <activity android:name=".Editar"></activity>
     </application>
 
 </manifest>
