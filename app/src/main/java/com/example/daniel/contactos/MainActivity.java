@@ -41,6 +41,20 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
 
         permisos();
+        Intent i = getIntent();
+        if(i.getBooleanExtra("editado", false) == true){
+            Contacto contactoEditado = i.getParcelableExtra("cEditado");
+            long id = contactoEditado.getId();
+            String nombre = contactoEditado.getNombre();
+            String telefono = contactoEditado.getTelefono();
+            for (Contacto c : lista) {
+                if (c.getId() == id) {
+                    c.setNombre(nombre);
+                    c.setTelefono(telefono);
+                    adaptador.notifyDataSetChanged();
+                }
+            }
+        }
     }
 
     public void llenarLista(){

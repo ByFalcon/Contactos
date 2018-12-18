@@ -37,11 +37,12 @@ public class Editar extends AppCompatActivity {
         btGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 Contacto editado= new Contacto(contacto.getId(), editText.getText().toString(), editText2.getText().toString());
                 intent.putExtra("cEditado", editado);
-                setResult(RESULT_OK);
-                finish();
+                intent.putExtra("editado", true);
+                //setResult(RESULT_OK);
+                startActivity(intent);
             }
         });
     }

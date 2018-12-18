@@ -1,6 +1,7 @@
 package com.example.daniel.contactos;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -83,7 +84,7 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ViewHolder>{
         }
         Intent intent = new Intent(context, Editar.class);
         intent.putExtra("contacto", c);
-        //((Activity)context).startActivityForResult(intent, 10);
+        context.getApplicationContext().startActivity(intent);
 
     }
 

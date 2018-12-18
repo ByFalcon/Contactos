@@ -12,7 +12,7 @@ public class Contacto implements Parcelable {
     public Contacto(long id, String titulo, String telefono) {
         this.id = id;
         this.nombre = titulo;
-        this.telefono = this.telefono;
+        this.telefono = telefono;
     }
 
     public Contacto(){
